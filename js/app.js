@@ -5,8 +5,10 @@ import { setRenderer } from './router.js';
 import { daysToExam } from './stats.js';
 import { overdueTasks } from './tasks.js';
 import { startSync, paintSync } from './sync.js';
+import { startAssistant } from './assistant.js';
 import * as home from './pages/dashboard.js';
 import * as tracker from './pages/tracker.js';
+import * as reminders from './pages/reminders.js';
 import * as daily from './pages/daily.js';
 import * as weekly from './pages/weekly.js';
 import * as monthly from './pages/monthly.js';
@@ -18,7 +20,7 @@ import * as goals from './pages/goals.js';
 import * as analytics from './pages/analytics.js';
 import * as settings from './pages/settings.js';
 
-const pages = { home, tracker, daily, weekly, monthly, study, focus, habits, skills, goals, analytics, settings };
+const pages = { home, tracker, reminders, daily, weekly, monthly, study, focus, habits, skills, goals, analytics, settings };
 
 const QUOTES = [
   ['I think I can, I know I can.', 'One step at a time.'],
@@ -89,6 +91,7 @@ setRenderer(render);
 wireActions();
 render();
 startSync();
+startAssistant();
 
 // Time moves on without any edit: re-render after midnight ("today") and when a task slips into overdue.
 let lastDay = todayKey();

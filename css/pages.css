@@ -142,8 +142,22 @@ h3 .count{display:inline-grid;place-items:center;min-width:22px;height:22px;padd
 .skilldays .hcell .i{width:12px;height:12px}
 .sprint-done{background:var(--pinkbg);border-radius:12px;padding:10px 12px;font-size:12px;display:grid;gap:8px;justify-items:start}
 
+/* Reminder cards (study assistant) and history */
+/* Bottom-right, above the toast: never covers the header buttons. */
+.assistant{position:fixed;bottom:76px;right:20px;z-index:60;display:grid;gap:10px;width:min(360px,calc(100vw - 24px))}
+.remind{background:#fff;border:1px solid var(--line);border-left:5px solid var(--pink-ink);border-radius:14px;padding:12px 14px;box-shadow:0 10px 30px #3b2a2a2e;display:grid;gap:8px;font-size:13px;animation:remindIn .25s ease-out}
+.remind p{margin:0}
+.remind.kind-pre{border-left-color:#b7791f}
+.remind.kind-end{border-left-color:#6b5aa6}
+.remind .snooze{gap:6px}
+.tag.good{background:#dff0dc;color:#2f5f2b}
+.muted-item{opacity:.75}
+@keyframes remindIn{from{opacity:0;transform:translateY(-8px)}}
+@media(prefers-reduced-motion:reduce){.remind{animation:none}}
+
 @media(max-width:1150px){.quickadd{grid-template-columns:1fr 1fr 1fr}.quickadd .qa-title{grid-column:1/-1}.kpi{grid-column:span 4}}
 @media(max-width:650px){
+  .assistant{bottom:136px;left:12px;right:12px;width:auto}
   .quickadd{grid-template-columns:1fr 1fr}
   .monthgrid{gap:2px}
   .mcell{min-height:64px;padding:3px}

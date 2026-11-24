@@ -28,3 +28,11 @@ export const hoot = () => play(() => {
   tone(460, 0, 0.3, { slideTo: 400 });
   tone(430, 0.36, 0.45, { slideTo: 360 });
 });
+
+// One sound per reminder kind, so she can tell them apart without looking: soft heads-up, rising "go", ding-dong check-in.
+const REMIND = {
+  pre: () => [[784, 0], [988, 0.16]].forEach(([f, t]) => tone(f, t, 0.45, { gain: 0.1 })),
+  start: () => [[523, 0], [659, 0.12], [784, 0.24], [1047, 0.36]].forEach(([f, t]) => tone(f, t, 0.5, { type: 'triangle', gain: 0.16 })),
+  end: () => [[880, 0], [659, 0.32]].forEach(([f, t]) => tone(f, t, 0.8)),
+};
+export const remind = (kind) => play(REMIND[kind] ?? REMIND.start);

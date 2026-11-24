@@ -1,14 +1,15 @@
 // Network first, cache as fallback: always the latest version online, still opens offline.
 // Bump CACHE whenever the file list changes, so installed copies pick up the new code.
-const CACHE = 'ca-inter-hq-v2';
+const CACHE = 'ca-inter-hq-v3';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './icons/owl.svg',
   './css/base.css', './css/pages.css', './css/owl.css',
   './js/app.js', './js/util.js', './js/store.js', './js/router.js', './js/stats.js', './js/tasks.js', './js/charts.js',
   './js/owl.js', './js/sound.js', './js/focusTimer.js', './js/sync.js', './js/syncCore.js', './js/firebaseConfig.js',
+  './js/schedule.js', './js/assistant.js',
   './js/pages/dashboard.js', './js/pages/tracker.js', './js/pages/daily.js', './js/pages/weekly.js', './js/pages/monthly.js',
   './js/pages/study.js', './js/pages/focus.js', './js/pages/habits.js', './js/pages/goals.js', './js/pages/analytics.js',
-  './js/pages/settings.js',
+  './js/pages/settings.js', './js/pages/skills.js', './js/pages/reminders.js',
 ];
 
 self.addEventListener('install', (e) => {
@@ -36,4 +37,16 @@ self.addEventListener('fetch', (e) => {
       })
       .catch(() => caches.match(e.request, { ignoreSearch: true })),
   );
+});
+
+// Reminder notifications: a tap (or Chrome's Completed / Still pending buttons) is handled by the open planner tab.
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const key = e.notification.data?.key;
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((tabs) => {
+    const tab = tabs[0];
+    if (!tab) return self.clients.openWindow('./');
+    if (key) tab.postMessage({ type: 'reminder', key, action: e.action || 'open' });
+    return tab.focus();
+  }));
 });

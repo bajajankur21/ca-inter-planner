@@ -9,17 +9,30 @@ It is a plain static website (HTML, CSS, JavaScript) with no build step. Sign in
 
 | Page | What it does |
 |---|---|
-| Dashboard | Exam countdown, today's progress rings, top 3, schedule, week strip, habit check-in, mini owl |
-| Main tracker | Type a task once and it appears on every page. Filters, inline edits, mood/sleep, notes and water logs |
+| Dashboard | Exam countdown, today's progress rings, top 3, schedule, week strip, habit check-in, mini owl. An Overdue and pending card appears on top only when something is overdue |
+| Main tracker | Type a task once and it appears on every page. Filters (including Overdue), inline edits, mood/sleep, notes and water logs |
+| Reminders | Smart task reminders: settings, quiet hours, what is coming up today, history of every reminder and her answer |
 | Daily planner | Hourly time blocks, top 3, to-do, mood and affirmation, wake/bed time, water glasses, meals, workout, notes |
 | Week at a glance | Hour-by-day grid, weekly donut, tasks grouped by priority |
 | Month at a glance | Calendar with tasks and events, monthly progress, upcoming events |
 | Papers and revision | P1 to P6 with chapter-wise Read, R1, R2, R3 and MTP/Qs ticks, exam countdown |
 | Focus room and owl | Pomodoro timer with adjustable lengths (25/5, 50/10, 60/10, 90/15 or custom), an owl that sleeps, wakes, watches the pointer, notices tab switches and celebrates finished sessions |
 | Habit tracker | Monthly grid for up to 12 habits, six KPI donuts, daily progress line, reflection notes |
+| Skill sprint | N-day sprints for any skill; today's learning is added as a task, finishing it (or a manual tick) grows the streak |
 | Goals and vision | Goals in six life areas with steps, year at a glance, vision board images |
 | Analytics | Study hours, focus by paper, habit consistency, task completion |
 | Settings and backup | Name, exam date, timer lengths, sounds, Google sync, download/restore backup |
+
+## Reminders and overdue tasks
+
+- **Reminders** (needs a start time on the task): 5 minutes before, at the start, and a check-in at the end time
+  (Completed / Still pending, snooze 5, 10 or 15 minutes). Rotating messages, a different sound per kind, quiet hours,
+  and a history. Finishing a task early stops its remaining reminders. Rescheduling re-arms them.
+- They work **while the planner is open**: any tab, minimised, or the home-screen app on screen. With *Allow notifications*
+  they also show as system notifications when the tab is in the background (Chrome adds Completed / Still pending buttons).
+  They cannot arrive once the planner is fully closed: that would need a push server, deliberately left out.
+- **Overdue**: an unfinished task is overdue after its end time (or start time, or the end of its day if untimed).
+  It is a view over the same task, never a copy, so carrying it forward cannot create duplicates. Reschedule moves it.
 
 ## Your data and sync
 
@@ -65,7 +78,9 @@ js/sync.js            Google sign-in and Firestore sync (SDK loaded from Google'
 js/syncCore.js        pure sync decisions (push, take cloud copy, ask), unit tested
 js/firebaseConfig.js  public Firebase web config
 firestore.rules       access rules to paste into the Firebase console
-js/tasks.js           task model and shared task UI
+js/tasks.js           task model and shared task UI (edit, done, reschedule, overdue list)
+js/schedule.js        pure time rules: task end, overdue, reminder times, quiet hours (unit tested)
+js/assistant.js       reminder engine, messages, in-app check-in cards, system notifications
 js/focusTimer.js      pomodoro engine (timestamp based, survives refresh)
 js/owl.js             SVG owl with moods, blinking and eye tracking
 js/pages/*.js         one module per page
