@@ -1,0 +1,141 @@
+/* Page-specific layouts: planner grids, calendars, habit grid, tables, goals, vision board. */
+.center{text-align:center;display:grid;justify-items:center;gap:6px}
+.grow{flex:1;min-width:0}
+.bignum{font:500 26px var(--serif);display:block}
+.datenav{display:flex;align-items:center;gap:6px}
+.datenav h3{margin:0;min-width:150px;text-align:center}
+.datenav .field{flex:1}
+.dayname{font:italic 18px var(--serif);margin:12px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+
+/* chips: a task inside a calendar cell or time block */
+.chip{display:flex;align-items:center;gap:4px;width:100%;border:0;border-left:3px solid var(--pc);background:color-mix(in srgb,var(--pc) 16%,#fff);
+  border-radius:6px;padding:4px 6px;margin:2px 0;font-size:11px;text-align:left;color:var(--ink);line-height:1.25}
+.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip.done{opacity:.6}
+.chip.done span{text-decoration:line-through}
+.chip:hover{filter:brightness(.97)}
+.icon-btn.add{opacity:.35;font-size:13px}
+.icon-btn.add:hover,.icon-btn.add:focus-visible{opacity:1}
+
+/* dashboard */
+.weekstrip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.calday{border:0;background:#faf7f3;border-radius:9px;padding:8px 2px;display:grid;justify-items:center;gap:1px;font-size:10px;color:var(--muted)}
+.calday b{font-size:15px;color:var(--ink)}
+.calday small{font-size:10px;min-height:13px;color:var(--pink-ink)}
+.calday.today,.today.calday{background:var(--pinkbg);outline:1px solid var(--pink)}
+.papergrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px 24px}
+
+/* daily */
+.minical b{font-size:12px}
+.mcgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:6px}
+.mch{font-size:10px;color:var(--muted);text-align:center}
+.mc{border:0;background:#faf7f3;border-radius:6px;padding:5px 0;font-size:11px;position:relative}
+.mc.has:after{content:"";position:absolute;bottom:2px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--pink-ink)}
+.mc.today{outline:1px solid var(--pink)}
+.mc.sel{background:var(--brown);color:#fff}
+.timeline{display:grid;border-top:1px solid var(--line)}
+.slot{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:start;border-bottom:1px solid var(--line);padding:5px 0;min-height:34px}
+.slot-h{font-size:10px;color:var(--muted);padding-top:4px}
+.slot.busy{background:linear-gradient(90deg,#fff,#fffaf7)}
+.glasses{display:flex;flex-wrap:wrap;gap:6px}
+.glass{border:0;background:none;padding:2px;width:30px}
+.glass svg{width:100%;height:auto;display:block}
+.g-outline{fill:none;stroke:#9cc6e4;stroke-width:1.6;stroke-linejoin:round}
+.g-water{fill:#9cc6e4;opacity:0;transition:opacity .2s}
+.glass.on .g-water{opacity:.85}
+
+/* weekly */
+.weekgrid-wrap{overflow-x:auto;margin-top:8px}
+.weekgrid{display:grid;grid-template-columns:52px repeat(7,minmax(94px,1fr));min-width:720px;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.weekgrid > div{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.wg-head{display:grid;justify-items:center;padding:6px;font-size:11px;color:var(--muted);background:#fffaf6;position:sticky;top:0}
+.wg-head b{font-size:16px;color:var(--ink)}
+.wg-head.today{background:var(--pinkbg)}
+.wg-time{font-size:10px;color:var(--muted);padding:6px 4px;text-align:right}
+.wg-cell{padding:3px;min-height:34px;display:flex;flex-direction:column}
+.wg-cell .add{align-self:flex-end;margin-top:auto}
+.wg-cell.today{background:#fdf6f6}
+
+/* monthly */
+.monthgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.mhead{font-size:11px;color:var(--muted);text-align:center;padding:4px}
+.mcell{background:#fcfaf7;border:1px solid var(--line);border-radius:10px;padding:5px;min-height:104px;min-width:0}
+.mcell.blank{background:none;border:0}
+.mcell.today{background:var(--yellow);border-color:#e9cf73}
+.mday{border:0;background:none;font-weight:700;font-size:12px;padding:2px 4px;border-radius:6px}
+.mday:hover{background:var(--pinkbg)}
+.more{border:0;background:none;font-size:10px;color:var(--pink-ink);padding:2px}
+
+/* tables */
+.tablewrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:7px 6px;border-bottom:1px solid #f4efea;vertical-align:middle;white-space:nowrap}
+.tbl td.wide{white-space:normal;min-width:180px;width:100%}
+.tbl tr.done td.wide{text-decoration:line-through;color:#978c85}
+.tracker .dot{vertical-align:middle}
+.mini{border:1px solid var(--line);border-radius:8px;padding:3px 4px;background:#fff;font-size:11px}
+.quickadd{display:grid;grid-template-columns:140px 110px 110px minmax(200px,1fr) 90px 130px 110px auto auto auto;gap:8px;align-items:center}
+.waterlog{display:flex;gap:8px;justify-content:space-between;align-items:end;height:130px}
+.wl{display:grid;justify-items:center;gap:4px;font-size:10px;color:var(--muted);height:100%;grid-template-rows:auto 1fr auto}
+.wl-bar{width:14px;background:#eef5fa;border-radius:8px;display:flex;align-items:flex-end;overflow:hidden}
+.wl-bar i{display:block;width:100%;background:#9cc6e4;border-radius:8px}
+
+/* papers */
+.paper{border-top:4px solid var(--tone)}
+.paper-head{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.paper-head h3{margin:2px 0}
+.stagebars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:6px 0 12px}
+.stagebars small{font-size:10px;color:var(--muted)}
+.chapters td:not(.wide),.chapters th:not(:first-child){text-align:center}
+.countdown{display:flex;align-items:baseline;gap:10px}
+.countdown strong{font:500 64px var(--serif);color:var(--pink-ink);line-height:1}
+
+/* habits */
+.habit-add{margin:0;min-width:min(380px,100%)}
+.kpi small{font-size:11px;color:var(--muted)}
+.habitgrid{border-collapse:separate;border-spacing:0;font-size:11px;min-width:100%}
+.habitgrid th,.habitgrid td{padding:2px;text-align:center}
+.habitgrid .hname{text-align:left;white-space:nowrap;padding-right:10px;position:sticky;left:0;background:#fff;z-index:1;font-weight:500;min-width:190px}
+.hn{display:flex;gap:6px;align-items:center}
+.hn .linklike{flex:1;text-align:left}
+.wkband{background:var(--wk);border-radius:8px 8px 0 0;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#6f5a55}
+.habitgrid .hd,.habitgrid td{background:color-mix(in srgb,var(--wk) 45%,#fff)}
+.hd{font-weight:600;color:#6f5a55;min-width:24px}
+.hd span{display:block;font-weight:400;font-size:9px;color:var(--muted)}
+.hcell{width:22px;height:22px;border-radius:6px;border:1.5px solid #e2d6cf;background:#fff;display:grid;place-items:center;padding:0;color:#fff;font-size:12px}
+.hcell.on{background:var(--pink-ink);border-color:var(--pink-ink)}
+.hcell.today{box-shadow:0 0 0 2px var(--yellow)}
+.wkpct{font-weight:700;color:#6f5a55;padding:6px 2px!important}
+
+/* goals + vision */
+.area{border-top:4px solid var(--area)}
+.goal{border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:6px}
+.goal.achieved{background:#f7fbf6}
+.steps{display:grid;gap:4px;padding-left:4px}
+.yeargrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.yearcell{background:#fcfaf7;border-radius:12px;padding:10px;display:grid;gap:4px;align-content:start;min-height:90px}
+.yg{font-size:12px;display:flex;gap:6px;align-items:center}
+.yg.done{color:#5d8a58}
+.vision{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.vision figure{margin:0;position:relative;background:#fcfaf7;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.vision img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.vision figcaption{padding:6px}
+.vision .field{border:0;background:transparent;font:600 18px var(--hand);text-align:center;color:var(--brown)}
+.vdel{position:absolute;top:6px;right:6px;background:#fffc}
+label.btn:focus-within{outline:2px solid var(--pink-ink);outline-offset:2px}
+
+@media(max-width:1150px){.quickadd{grid-template-columns:1fr 1fr 1fr}.quickadd .qa-title{grid-column:1/-1}.kpi{grid-column:span 4}}
+@media(max-width:650px){
+  .quickadd{grid-template-columns:1fr 1fr}
+  .monthgrid{gap:2px}
+  .mcell{min-height:64px;padding:3px}
+  .mcell .chip span{display:none}
+  .mcell .chip{padding:3px;min-height:8px}
+  .mcell .add{display:none}
+  .stagebars{grid-template-columns:repeat(3,1fr)}
+  .kpi{grid-column:span 6}
+  .countdown strong{font-size:48px}
+}

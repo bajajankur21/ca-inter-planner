@@ -1,0 +1,11 @@
+{
+  "name": "CA INTER HQ",
+  "short_name": "CA Inter HQ",
+  "description": "A cosy CA Inter study planner with an owl that keeps you focused.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf8f3",
+  "theme_color": "#faf8f3",
+  "icons": [{ "src": "icons/owl.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

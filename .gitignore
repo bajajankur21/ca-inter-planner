@@ -1,0 +1,7 @@
+# Reference screenshots and source files: never publish
+reference/
+# Local-only test harness
+.local-tests/
+.DS_Store
+node_modules/
+.venv/

@@ -1,0 +1,99 @@
+/* The owl character and its study room. */
+.owl{width:100%;max-width:210px;height:auto;display:block;margin:auto;overflow:visible;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.owl:focus-visible{outline:2px dashed #e8aab5;outline-offset:6px;border-radius:20px}
+.owl-body{fill:#8a6a5c}
+.owl-ear,.owl-wing path{fill:#6f5246}
+.owl-belly{fill:#f3dccb}
+.owl-feathers{fill:none;stroke:#d9b9a4;stroke-width:2.5;stroke-linecap:round}
+.owl-face{fill:#f6e7da}
+.owl-sclera{fill:#fff}
+.owl-iris{fill:#2b2220}
+.owl-glint{fill:#fff}
+.owl-pupil{transition:transform .14s ease-out}
+.owl-lid{fill:#e9cdb9;transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0);transition:transform .22s ease}
+.owl-beak{fill:#e8a93f}
+.owl-cheek{fill:#f2a7b2;opacity:.55}
+.owl-feet{stroke:#e8a93f;stroke-width:4;stroke-linecap:round}
+.owl-shadow{fill:#00000026}
+.owl-brows path{stroke:#4f382f;stroke-width:5;stroke-linecap:round;opacity:0;transition:opacity .2s}
+.owl-happy{fill:none;stroke:#2b2220;stroke-width:5;stroke-linecap:round;opacity:0}
+.owl-eye{transition:opacity .15s}
+.owl-zzz text{font:700 18px var(--sans);fill:#cbbfe6;opacity:0;transform-box:fill-box}
+.owl-tilt,.owl-bob,.owl-wing{transform-box:fill-box}
+.owl-tilt{transform-origin:50% 100%;transition:transform .5s ease}
+.owl-bob{transform-origin:50% 100%}
+.owl-wing-l{transform-origin:90% 8%}
+.owl-wing-r{transform-origin:10% 8%}
+
+/* sleep */
+.owl[data-state=sleep] .owl-lid{transform:scaleY(1)}
+.owl[data-state=sleep] .owl-bob{animation:owl-breathe 4s ease-in-out infinite}
+.owl[data-state=sleep] .owl-zzz text{animation:owl-z 3s ease-in-out infinite}
+.owl[data-state=sleep] .owl-zzz text:nth-child(2){animation-delay:1s}
+.owl[data-state=sleep] .owl-zzz text:nth-child(3){animation-delay:2s}
+.owl.stir .owl-bob{animation:owl-stir .6s ease}
+/* awake-ish */
+.owl:not([data-state=sleep]) .owl-bob{animation:owl-float 3.2s ease-in-out infinite}
+.owl.waking .owl-bob{animation:owl-stretch .9s ease}
+.owl.waking .owl-wing-l{animation:owl-flap-l .3s ease-in-out 3 alternate}
+.owl.waking .owl-wing-r{animation:owl-flap-r .3s ease-in-out 3 alternate}
+.owl.blink .owl-lid{transform:scaleY(1);transition-duration:.07s}
+.owl.tilt-l .owl-tilt{transform:rotate(-7deg)}
+.owl.tilt-r .owl-tilt{transform:rotate(7deg)}
+.owl[data-state=suspicious] .owl-lid{transform:scaleY(.5)}
+.owl[data-state=suspicious] .owl-brows path{opacity:1}
+.owl[data-state=suspicious] .owl-tilt{transform:rotate(-5deg)}
+.owl[data-state=break] .owl-lid{transform:scaleY(.32)}
+.owl[data-state=break] .owl-wing-l{animation:owl-wave 2.4s ease-in-out infinite}
+.owl[data-state=happy] .owl-eye,.owl[data-state=celebrate] .owl-eye{opacity:0}
+.owl[data-state=happy] .owl-happy,.owl[data-state=celebrate] .owl-happy{opacity:1}
+.owl[data-state=happy] .owl-cheek,.owl[data-state=celebrate] .owl-cheek{opacity:.9}
+.owl[data-state=happy] .owl-bob{animation:owl-hop .5s ease 2}
+.owl[data-state=celebrate] .owl-bob{animation:owl-hop .5s ease infinite}
+.owl[data-state=celebrate] .owl-wing-l{animation:owl-flap-l .25s ease-in-out infinite alternate}
+.owl[data-state=celebrate] .owl-wing-r{animation:owl-flap-r .25s ease-in-out infinite alternate}
+
+@keyframes owl-float{50%{transform:translateY(-5px)}}
+@keyframes owl-breathe{50%{transform:scale(1.02,.98)}}
+@keyframes owl-z{0%{opacity:0;transform:translate(0,8px)}40%{opacity:1}100%{opacity:0;transform:translate(6px,-10px)}}
+@keyframes owl-stir{30%{transform:rotate(-4deg)}70%{transform:rotate(4deg)}}
+@keyframes owl-hop{40%{transform:translateY(-16px)}}
+@keyframes owl-flap-l{to{transform:rotate(30deg)}}
+@keyframes owl-flap-r{to{transform:rotate(-30deg)}}
+@keyframes owl-wave{50%{transform:rotate(20deg)}}
+@keyframes owl-stretch{30%{transform:scale(1.06,.92)}60%{transform:scale(.96,1.08)}}
+
+/* ---------- the study room ---------- */
+.owlroom{background:#252329;color:#fff;border-radius:22px;padding:20px;position:relative;overflow:hidden;transition:background .6s}
+.owlroom:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background:radial-gradient(1.5px 1.5px at 12% 18%,#fff8,transparent),radial-gradient(1.5px 1.5px at 28% 8%,#fff6,transparent),
+  radial-gradient(1px 1px at 46% 22%,#fff8,transparent),radial-gradient(1.5px 1.5px at 70% 12%,#fff6,transparent),radial-gradient(1px 1px at 88% 26%,#fff8,transparent)}
+.owlroom.lit{background:radial-gradient(circle at 50% 0,#6a524e,#29252b 68%)}
+.owlroom .eyebrow{color:#eab6c0}
+.owlroom .lamp{position:absolute;right:22px;top:46px;width:44px;height:44px;border-radius:50%;background:#4a4248;transition:.4s}
+.owlroom.lit .lamp{background:#ffe9a8;box-shadow:0 0 40px 14px #ffe19a66}
+.owlroom .roomstate{font-size:11px;color:#e6d9d4}
+.owlstage{text-align:center;padding:12px 0 8px;position:relative}
+.perch{width:min(240px,70%);height:16px;margin:-6px auto 0;border-radius:6px;background:linear-gradient(#f2b8c2 0 33%,#f5d27a 0 66%,#a9d3a5 0);box-shadow:0 6px 12px #0004}
+.speech{display:inline-block;background:#fff;color:#544541;border-radius:14px;padding:11px 15px;font-size:13px;max-width:460px;margin-top:14px;position:relative;min-height:42px}
+.speech:before{content:"";position:absolute;left:50%;top:-7px;margin-left:-7px;border:7px solid transparent;border-top:0;border-bottom-color:#fff}
+.mode{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:14px}
+.mode button,.timerctrl button{border:1px solid #ffffff44;background:#ffffff12;color:#fff;border-radius:22px;padding:8px 13px;font-size:12px}
+.mode button.sel,.timerctrl .start{background:#e8aab5;color:#382b2e;border-color:#e8aab5;font-weight:600}
+.timer{font:500 56px var(--serif);text-align:center;margin:8px 0 6px;font-feature-settings:"tnum";letter-spacing:1px}
+.timerctrl{display:flex;justify-content:center;gap:7px;flex-wrap:wrap}
+.studying{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;max-width:480px;margin:12px auto}
+.studying .field{background:#ffffff14;border-color:#ffffff33;color:#fff}
+.studying .field option{color:#302b29}
+.studying .field::placeholder{color:#d9cdc8}
+.cycle{display:flex;justify-content:center;gap:6px;margin:12px 0 4px}
+.cycle i{width:10px;height:10px;border-radius:50%;background:#ffffff2a}
+.cycle i.on{background:#e8aab5}
+.roomfoot{text-align:center;color:#d7c9c3;font-size:12px;margin:6px 0 0}
+.minowl{display:flex;align-items:center;gap:14px}
+.minowl .owlhost{width:110px;flex:none;background:#252329;border-radius:18px;padding:10px 8px 4px}
+.minowl .owlhost.lit{background:radial-gradient(circle at 50% 0,#6a524e,#29252b 70%)}
+.chatlog{display:grid;gap:6px;max-height:190px;overflow:auto;font-size:12px}
+.bubble{background:#f5eeea;padding:8px 10px;border-radius:10px;max-width:90%}
+.bubble.me{justify-self:end;background:#f6e1e5}
+@media(max-width:650px){.timer{font-size:46px}.studying{grid-template-columns:1fr}}

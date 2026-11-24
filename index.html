@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#faf8f3">
+<meta name="description" content="A cosy CA Inter study planner: daily, weekly and monthly plans, habits, goals, a revision tracker and an owl that keeps you focused.">
+<title>CA INTER HQ</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/owl.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/owl.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="app">
+  <aside class="side" id="side" aria-label="Main navigation">
+    <div class="brand">
+      <small>Your study space</small>
+      <h1>CA INTER HQ</h1>
+      <p>Every chapter, habit and goal in one place</p>
+    </div>
+    <nav class="nav">
+      <div class="navlabel">OVERVIEW</div>
+      <a href="#home" data-p="home"><span class="ico" aria-hidden="true">⌂</span>Dashboard</a>
+      <a href="#tracker" data-p="tracker"><span class="ico" aria-hidden="true">≡</span>Main tracker</a>
+      <div class="navlabel">PLAN</div>
+      <a href="#daily" data-p="daily"><span class="ico" aria-hidden="true">◷</span>Daily planner</a>
+      <a href="#weekly" data-p="weekly"><span class="ico" aria-hidden="true">▦</span>Week at a glance</a>
+      <a href="#monthly" data-p="monthly"><span class="ico" aria-hidden="true">▤</span>Month at a glance</a>
+      <div class="navlabel">CA INTER</div>
+      <a href="#study" data-p="study"><span class="ico" aria-hidden="true">§</span>Papers &amp; revision</a>
+      <a href="#focus" data-p="focus"><span class="ico" aria-hidden="true">◉</span>Focus room &amp; owl</a>
+      <div class="navlabel">GROWTH</div>
+      <a href="#habits" data-p="habits"><span class="ico" aria-hidden="true">◈</span>Habit tracker</a>
+      <a href="#goals" data-p="goals"><span class="ico" aria-hidden="true">◎</span>Goals &amp; vision</a>
+      <a href="#analytics" data-p="analytics"><span class="ico" aria-hidden="true">▥</span>Analytics</a>
+      <a href="#settings" data-p="settings"><span class="ico" aria-hidden="true">◐</span>Settings &amp; backup</a>
+    </nav>
+    <div class="quote" id="quote"></div>
+  </aside>
+
+  <main id="main" tabindex="-1">
+    <header class="top">
+      <div>
+        <div class="eyebrow" id="todayLabel"></div>
+        <h2 id="pageTitle"></h2>
+      </div>
+      <div class="top-actions">
+        <a class="pill" id="countdownPill" href="#settings"></a>
+        <button class="pill primary" data-act="task-new">＋ Add task</button>
+      </div>
+    </header>
+    <section class="page" id="page-home" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-tracker" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-daily" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-weekly" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-monthly" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-study" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-focus" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-habits" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-goals" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-analytics" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-settings" aria-labelledby="pageTitle"></section>
+  </main>
+</div>
+
+<nav class="bottom" aria-label="Quick navigation">
+  <a href="#home" data-p="home"><span class="ico" aria-hidden="true">⌂</span>Home</a>
+  <a href="#daily" data-p="daily"><span class="ico" aria-hidden="true">◷</span>Today</a>
+  <a href="#study" data-p="study"><span class="ico" aria-hidden="true">§</span>Papers</a>
+  <a href="#focus" data-p="focus"><span class="ico" aria-hidden="true">◉</span>Focus</a>
+  <button data-act="nav-toggle" aria-controls="side" aria-expanded="false"><span class="ico" aria-hidden="true">⋯</span>More</button>
+</nav>
+<div class="scrim" data-act="nav-toggle" aria-hidden="true"></div>
+
+<div class="modalbg" id="modalbg" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h3 id="modalTitle"></h3>
+    <form id="modalForm"></form>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript><p style="padding:20px">This planner needs JavaScript switched on.</p></noscript>
+</body>
+</html>
