@@ -2,6 +2,8 @@
 import { toast } from './util.js';
 
 const KEY = 'ca-inter-hq-v1';
+// Too big for the cloud document (vision images are data URLs), so these stay on the device that added them.
+const DEVICE_ONLY = ['vision'];
 
 // CA Inter (ICAI scheme applicable from May 2024). Chapters are added by the student.
 const PAPERS = [
@@ -58,6 +60,9 @@ function load() {
 let state = load();
 const listeners = new Set();
 const notify = () => listeners.forEach((fn) => fn());
+// Edits made on this device (not ones arriving from the cloud or another tab): the sync layer pushes these.
+const editListeners = new Set();
+const edited = () => editListeners.forEach((fn) => fn());
 
 function persist() {
   try {
@@ -83,12 +88,39 @@ export const store = {
   update(mutator, { silent = false } = {}) {
     mutator(state);
     persist();
+    edited();
     if (!silent) notify();
   },
 
   subscribe(fn) {
     listeners.add(fn);
     return () => listeners.delete(fn);
+  },
+
+  onLocalEdit(fn) {
+    editListeners.add(fn);
+    return () => editListeners.delete(fn);
+  },
+
+  /** Has anything been entered yet (here, or in a cloud copy)? Decides whether a first sign-in must ask before replacing data. */
+  hasData(s = state) {
+    return Boolean(s.tasks.length || s.sessions.length || s.habits.length || s.goals.length || Object.keys(s.days).length
+      || s.profile.name || s.profile.examDate || s.papers.some((p) => p.chapters.length));
+  },
+
+  /** The part of the state that syncs. */
+  cloudData() {
+    const copy = { ...state };
+    DEVICE_ONLY.forEach((k) => delete copy[k]);
+    return copy;
+  },
+
+  /** Take the cloud copy, keeping device-only parts. Not a local edit, so it is not pushed back. */
+  applyCloud(data) {
+    const keep = Object.fromEntries(DEVICE_ONLY.map((k) => [k, state[k]]));
+    state = hydrate({ ...data, ...keep });
+    persist();
+    notify();
   },
 
   /** Read-only view of a day; never creates empty entries. */
@@ -104,8 +136,8 @@ export const store = {
     return s.days[key];
   },
 
-  exportJson() {
-    return JSON.stringify({ app: 'ca-inter-hq', exportedAt: new Date().toISOString(), data: state }, null, 2);
+  exportJson(data = state) {
+    return JSON.stringify({ app: 'ca-inter-hq', exportedAt: new Date().toISOString(), data }, null, 2);
   },
 
   importJson(text) {
@@ -114,12 +146,14 @@ export const store = {
     if (!data || !Array.isArray(data.tasks) || !Array.isArray(data.papers)) throw new Error('Not a CA Inter HQ backup');
     state = hydrate(data);
     persist();
+    edited();
     notify();
   },
 
   reset() {
     state = defaults();
     persist();
+    edited();
     notify();
   },
 };

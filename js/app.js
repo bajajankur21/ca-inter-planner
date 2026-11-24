@@ -3,6 +3,7 @@ import { $, $$, onAction, wireActions, fmt, todayKey } from './util.js';
 import { store } from './store.js';
 import { setRenderer } from './router.js';
 import { daysToExam } from './stats.js';
+import { startSync, paintSync } from './sync.js';
 import * as home from './pages/dashboard.js';
 import * as tracker from './pages/tracker.js';
 import * as daily from './pages/daily.js';
@@ -61,6 +62,7 @@ function render() {
   $('#pageTitle').textContent = pages[name].title;
   renderHeader();
   pages[name].render($(`#page-${name}`));
+  paintSync();
   if (sig) document.querySelector(sig)?.focus({ preventScroll: true });
 }
 
@@ -79,6 +81,7 @@ store.subscribe(render);
 setRenderer(render);
 wireActions();
 render();
+startSync();
 
 // Re-render shortly after midnight so "today" moves on its own if the tab stays open.
 let lastDay = todayKey();

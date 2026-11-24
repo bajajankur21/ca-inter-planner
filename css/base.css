@@ -16,6 +16,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--sans)}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 button:disabled{cursor:not-allowed;opacity:.45}
+/* Component display rules (e.g. .btn inline-flex) must never beat the hidden attribute. */
+[hidden]{display:none!important}
 :focus-visible{outline:2px solid var(--pink-ink);outline-offset:2px}
 main:focus{outline:none}
 .skip{position:absolute;left:-999px;top:8px;background:var(--brown);color:#fff;padding:8px 12px;border-radius:8px;z-index:60}
@@ -67,6 +69,11 @@ main{padding:28px clamp(14px,3vw,40px) 90px;max-width:1500px;width:100%;margin:a
 /* ---------- controls ---------- */
 .btn,.pill{border:1px solid var(--line);background:#fff;color:var(--brown);border-radius:30px;padding:8px 14px;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn:hover,.pill:hover{border-color:var(--pink)}
+/* Sync status dot: grey = not syncing, amber = working, green = synced, red = problem. */
+.pill.sync::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.sync[data-status=synced]::before{background:#3f7d3a}
+.pill.sync[data-status=saving]::before,.pill.sync[data-status=loading]::before{background:#b7791f}
+.pill.sync[data-status=error]::before{background:#c0392b}
 .primary{background:var(--brown);color:#fff;border-color:var(--brown)}
 .primary:hover{background:var(--brown-dark)}
 .icon-btn{border:0;background:none;color:#8f837b;padding:4px 7px;border-radius:8px;line-height:1;font-size:15px}
@@ -114,7 +121,6 @@ textarea.field{resize:vertical;min-height:72px}
 
 /* ---------- modal, toast, mobile nav ---------- */
 .modalbg{position:fixed;inset:0;background:#211b1b88;z-index:40;display:grid;place-items:center;padding:15px}
-.modalbg[hidden]{display:none}
 .modal{background:#fff;border-radius:20px;padding:22px;width:min(480px,100%);max-height:92vh;overflow:auto}
 .modal h3{font:italic 500 24px var(--serif);margin:0 0 14px}
 .modal form{display:grid;gap:10px}

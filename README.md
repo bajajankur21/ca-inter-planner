@@ -3,7 +3,7 @@
 A cosy study planner for CA Inter students: daily, weekly and monthly plans, a revision tracker for all six papers,
 habits, goals with a vision board, and a focus room where an owl wakes up when you start studying and keeps an eye on you.
 
-It is a plain static website (HTML, CSS, JavaScript). There is no server, no build step and no account to create.
+It is a plain static website (HTML, CSS, JavaScript) with no build step. Sign in with Google to sync across devices.
 
 ## Pages
 
@@ -19,13 +19,23 @@ It is a plain static website (HTML, CSS, JavaScript). There is no server, no bui
 | Habit tracker | Monthly grid for up to 12 habits, six KPI donuts, daily progress line, reflection notes |
 | Goals and vision | Goals in six life areas with steps, year at a glance, vision board images |
 | Analytics | Study hours, focus by paper, habit consistency, task completion |
-| Settings and backup | Name, exam date, timer lengths, sounds, download/restore backup |
+| Settings and backup | Name, exam date, timer lengths, sounds, Google sync, download/restore backup |
 
-## Your data
+## Your data and sync
 
-Everything is saved in the browser's local storage on the device you use. Nothing is uploaded anywhere.
-That also means a phone and a laptop each keep their own copy. Use **Settings > Download backup** regularly,
-and **Restore from backup** to move data to another device.
+The planner always saves to the browser first, so it is instant and works offline. After **Settings > Sign in with Google**,
+it also keeps a copy in Firebase (Firestore) and updates every signed-in device live, even after being offline.
+
+- One Firestore document per Google account (`users/{uid}`). `firestore.rules` lets only that account read or write it.
+- Vision board photos stay on the device that added them (too big for the cloud document).
+- If two devices both edit before syncing, the newest edit wins.
+- First sign-in on a device that already has its own data asks which copy to keep, and downloads the other one as a backup file.
+- The Firebase web config in `js/firebaseConfig.js` is public by design. The rules are what protect the data.
+
+### One-time Firebase setup (already done for `ca-inter-hq`)
+
+1. Authentication: enable the Google provider and add the site's domain under Settings > Authorized domains.
+2. Firestore: create the database in production mode, then paste `firestore.rules` into the Rules tab and **Publish**.
 
 ## Run it locally
 
@@ -51,6 +61,10 @@ css/pages.css         planner grids, calendars, tables, habit grid, goals
 css/owl.css           the owl character and the study room
 js/app.js             boot, routing, header
 js/store.js           the single source of truth (localStorage), backup/restore
+js/sync.js            Google sign-in and Firestore sync (SDK loaded from Google's CDN)
+js/syncCore.js        pure sync decisions (push, take cloud copy, ask), unit tested
+js/firebaseConfig.js  public Firebase web config
+firestore.rules       access rules to paste into the Firebase console
 js/tasks.js           task model and shared task UI
 js/focusTimer.js      pomodoro engine (timestamp based, survives refresh)
 js/owl.js             SVG owl with moods, blinking and eye tracking

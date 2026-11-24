@@ -1,6 +1,6 @@
-// Settings, profile and backup. Data only lives in this browser, so backups matter.
+// Settings, profile, sync and backup.
 import { store } from '../store.js';
-import { esc, options, todayKey, toast, onAction, onChange, icon } from '../util.js';
+import { esc, options, toast, onAction, onChange, icon, downloadBackup } from '../util.js';
 import { refreshLength } from '../focusTimer.js';
 import { invalidate as rebuildFocusRoom } from './focus.js';
 
@@ -30,9 +30,19 @@ export function render(el) {
       ${num('Long break (minutes)', 'timer', 'long', t.long, 5, 90)}
       ${num('Long break after (sessions)', 'timer', 'longEvery', t.longEvery, 2, 8)}
     </div><p class="muted">Many CA students like 50 minutes focus and a 10 minute break. Try what suits you.</p></div>
+    <div class="card s12"><h3>Sync across devices</h3>
+      <p class="muted">Sign in with Google on each device (laptop, phone) and the planner stays the same everywhere.
+      Only your Google account can see your data. Vision board photos stay on the device where you added them.</p>
+      <p><b data-sync-label></b> <span data-sync-when="in">as <span data-sync-email></span></span></p>
+      <p class="muted" data-sync-detail></p>
+      <div class="row">
+        <button class="btn primary" data-act="sync-signin" data-sync-when="out">Sign in with Google</button>
+        <button class="btn" data-act="sync-signout" data-sync-when="in">Sign out</button>
+      </div>
+    </div>
     <div class="card s12"><h3>Backup &amp; restore</h3>
-      <p class="muted">Everything is saved privately in this browser on this device. Nothing is uploaded anywhere.
-      Download a backup now and then, especially before clearing browser data or switching phones.</p>
+      <p class="muted">The planner is always saved in this browser, and in your Google account once you sign in.
+      A backup file is still a good idea now and then, especially before clearing browser data.</p>
       <div class="row">
         <button class="btn primary" data-act="backup-export">${icon('download')} Download backup</button>
         <label class="btn">${icon('upload')} Restore from backup<input type="file" accept="application/json,.json" class="sr-only" data-change="backup-import"></label>
@@ -69,17 +79,14 @@ onChange('timer', (el) => {
 });
 
 onAction('backup-export', () => {
-  const blob = new Blob([store.exportJson()], { type: 'application/json' });
-  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `ca-inter-hq-backup-${todayKey()}.json` });
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  downloadBackup(store.exportJson());
   toast('Backup downloaded');
 });
 onChange('backup-import', async (el) => {
   const file = el.files[0];
   el.value = '';
   if (!file) return;
-  if (!confirm('Restoring replaces everything currently in the planner. Continue?')) return;
+  if (!confirm('Restoring replaces everything currently in the planner, including on your other devices if you are signed in. Continue?')) return;
   try {
     store.importJson(await file.text());
     rebuildFocusRoom();
@@ -89,7 +96,7 @@ onChange('backup-import', async (el) => {
   }
 });
 onAction('reset-all', () => {
-  if (!confirm('Delete ALL planner data in this browser? Download a backup first if unsure.')) return;
+  if (!confirm('Delete ALL planner data? If you are signed in, this also clears it on your other devices. Download a backup first if unsure.')) return;
   store.reset();
   rebuildFocusRoom();
   toast('Fresh start');

@@ -1,10 +1,11 @@
 // Network first, cache as fallback: always the latest version online, still opens offline.
-const CACHE = 'ca-inter-hq-v1';
+// Bump CACHE whenever the file list changes, so installed copies pick up the new code.
+const CACHE = 'ca-inter-hq-v2';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './icons/owl.svg',
   './css/base.css', './css/pages.css', './css/owl.css',
   './js/app.js', './js/util.js', './js/store.js', './js/router.js', './js/stats.js', './js/tasks.js', './js/charts.js',
-  './js/owl.js', './js/sound.js', './js/focusTimer.js',
+  './js/owl.js', './js/sound.js', './js/focusTimer.js', './js/sync.js', './js/syncCore.js', './js/firebaseConfig.js',
   './js/pages/dashboard.js', './js/pages/tracker.js', './js/pages/daily.js', './js/pages/weekly.js', './js/pages/monthly.js',
   './js/pages/study.js', './js/pages/focus.js', './js/pages/habits.js', './js/pages/goals.js', './js/pages/analytics.js',
   './js/pages/settings.js',
@@ -18,12 +19,16 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
+const isFont = (url) => url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
+
 self.addEventListener('fetch', (e) => {
-  if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
+  // Only our own files and fonts. Google sign-in and Firestore traffic must reach the network untouched.
+  if (e.request.method !== 'GET' || (url.origin !== location.origin && !isFont(url))) return;
   e.respondWith(
     fetch(e.request)
       .then((res) => {
-        if (res.ok && (new URL(e.request.url).origin === location.origin || e.request.url.includes('fonts.g'))) {
+        if (res.ok) {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put(e.request, copy));
         }

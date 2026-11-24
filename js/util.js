@@ -114,6 +114,14 @@ export function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
+/** Save a JSON backup file, e.g. ca-inter-hq-backup-2026-11-24.json. */
+export function downloadBackup(json, label = 'backup') {
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `ca-inter-hq-${label}-${todayKey()}.json` });
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
 // ---------- modal ----------
 let submitHandler = null;
 let returnFocus = null;
