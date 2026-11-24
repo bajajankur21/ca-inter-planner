@@ -1,7 +1,7 @@
 // Settings, profile, sync and backup.
 import { store } from '../store.js';
 import { esc, options, toast, onAction, onChange, icon, downloadBackup } from '../util.js';
-import { refreshLength } from '../focusTimer.js';
+import { LIMITS, setLengths } from '../focusTimer.js';
 import { invalidate as rebuildFocusRoom } from './focus.js';
 
 export const title = 'Make it yours.';
@@ -25,11 +25,8 @@ export function render(el) {
       <label class="check"><input type="checkbox" ${p.sound ? 'checked' : ''} data-change="profile" data-field="sound"> Sounds (owl hoot and session chime)</label>
     </div></div>
     <div class="card s6"><h3>Focus timer</h3><div class="form2">
-      ${num('Focus (minutes)', 'timer', 'focus', t.focus, 5, 180)}
-      ${num('Short break (minutes)', 'timer', 'short', t.short, 1, 60)}
-      ${num('Long break (minutes)', 'timer', 'long', t.long, 5, 90)}
-      ${num('Long break after (sessions)', 'timer', 'longEvery', t.longEvery, 2, 8)}
-    </div><p class="muted">Many CA students like 50 minutes focus and a 10 minute break. Try what suits you.</p></div>
+      ${Object.entries(LIMITS).map(([key, l]) => num(l.label, 'timer', key, t[key], l.min, l.max)).join('')}
+    </div><p class="muted">You can also change these in the Focus room. Many CA students like 50 minutes focus and a 10 minute break.</p></div>
     <div class="card s12"><h3>Sync across devices</h3>
       <p class="muted">Sign in with Google on each device (laptop, phone) and the planner stays the same everywhere.
       Only your Google account can see your data. Vision board photos stay on the device where you added them.</p>
@@ -59,23 +56,20 @@ function coerce(el) {
   return el.value;
 }
 
-function saveSetting(group, el) {
+function saveProfile(el) {
   const value = coerce(el);
   if (el.type === 'number' && (!Number.isFinite(value) || value < Number(el.min) || value > Number(el.max))) {
     toast(`Pick a number from ${el.min} to ${el.max}.`);
-    return false;
+    return;
   }
-  store.update((s) => { s[group][el.dataset.field] = value; });
-  return true;
+  store.update((s) => { s.profile[el.dataset.field] = value; });
 }
 
 // Shared by every page that edits the profile (settings, papers page).
-onChange('profile', (el) => saveSetting('profile', el));
+onChange('profile', saveProfile);
 onChange('timer', (el) => {
-  if (saveSetting('timer', el)) {
-    refreshLength();
-    rebuildFocusRoom();
-  }
+  const error = setLengths({ [el.dataset.field]: Number(el.value) });
+  if (error) toast(error);
 });
 
 onAction('backup-export', () => {

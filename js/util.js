@@ -9,6 +9,8 @@ export const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ESC
 export const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 export const pct = (part, whole) => (whole ? Math.round((part / whole) * 100) : 0);
 export const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
+/** plural(1, 'session') -> '1 session', plural(3, 'switch', 'switches') -> '3 switches'. */
+export const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 // ---------- dates (always LOCAL; toISOString() is UTC and shows "yesterday" in India until 05:30) ----------
 const pad = (n) => String(n).padStart(2, '0');

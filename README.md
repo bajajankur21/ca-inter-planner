@@ -15,7 +15,7 @@ It is a plain static website (HTML, CSS, JavaScript) with no build step. Sign in
 | Week at a glance | Hour-by-day grid, weekly donut, tasks grouped by priority |
 | Month at a glance | Calendar with tasks and events, monthly progress, upcoming events |
 | Papers and revision | P1 to P6 with chapter-wise Read, R1, R2, R3 and MTP/Qs ticks, exam countdown |
-| Focus room and owl | Pomodoro timer, an owl that sleeps, wakes, watches the pointer, notices tab switches and celebrates finished sessions |
+| Focus room and owl | Pomodoro timer with adjustable lengths (25/5, 50/10, 60/10, 90/15 or custom), an owl that sleeps, wakes, watches the pointer, notices tab switches and celebrates finished sessions |
 | Habit tracker | Monthly grid for up to 12 habits, six KPI donuts, daily progress line, reflection notes |
 | Goals and vision | Goals in six life areas with steps, year at a glance, vision board images |
 | Analytics | Study hours, focus by paper, habit consistency, task completion |

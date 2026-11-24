@@ -3,11 +3,14 @@ import { store } from '../store.js';
 import { createOwl } from '../owl.js';
 import * as timer from '../focusTimer.js';
 import { hoot } from '../sound.js';
-import { $, esc, ring, empty, options, onAction, onChange, pct, todayKey, toast } from '../util.js';
+import { $, esc, ring, empty, options, onAction, onChange, pct, todayKey, toast, field, openModal, plural } from '../util.js';
 import { minutesOn, sessionsOn, hoursLabel } from '../stats.js';
 import { paperShort } from '../tasks.js';
 
 export const title = 'Focus together, one session at a time.';
+
+// One-tap focus/break lengths in minutes. "Custom" covers everything else (e.g. 50 / 5).
+const PRESETS = [[25, 5], [50, 10], [60, 10], [90, 15]];
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 const LINES = {
@@ -65,7 +68,6 @@ function owlMood(st) {
 }
 
 function shell() {
-  const t = store.state.timer;
   const papers = [['', 'Pick a paper (optional)'], ...store.state.papers.map((p) => [p.id, `${p.short} - ${p.name}`])];
   const st = timer.status();
   return `
@@ -78,7 +80,12 @@ function shell() {
       <div class="owlstage"><div id="owlHost"></div><div class="perch" aria-hidden="true"></div>
         <div class="speech" id="speech" aria-live="polite"></div></div>
       <div class="mode" role="group" aria-label="Session type">
-        ${Object.entries(timer.MODES).map(([m, l]) => `<button data-act="focus-mode" data-mode="${m}" aria-pressed="false">${l} - ${t[m]}m</button>`).join('')}
+        ${Object.keys(timer.MODES).map((m) => `<button data-act="focus-mode" data-mode="${m}" aria-pressed="false"></button>`).join('')}
+      </div>
+      <div class="mode lengths" role="group" aria-label="Session length in minutes, focus and break">
+        <span>Length</span>
+        ${PRESETS.map(([f, b]) => `<button data-act="focus-preset" data-focus="${f}" data-short="${b}" aria-pressed="false" aria-label="${f} minutes focus, ${b} minutes break">${f} / ${b}</button>`).join('')}
+        <button data-act="focus-custom">Custom…</button>
       </div>
       <div class="timer" id="timer" role="timer">${timer.clock(st.remaining)}</div>
       <div class="studying">
@@ -117,14 +124,21 @@ function paint() {
   $('#roomState').textContent = { sleep: 'Sleeping, lamp off', watch: 'Awake and watching', break: 'On a break', awake: 'Awake, waiting for you' }[mood];
   const label = st.running ? 'Pause' : st.startedAt ? 'Resume' : st.mode === 'focus' ? 'Start focus' : 'Start break';
   $('#startBtn').textContent = label;
+  const t = store.state.timer;
   document.querySelectorAll('[data-act="focus-mode"]').forEach((b) => {
     const on = b.dataset.mode === st.mode;
+    b.textContent = `${timer.MODES[b.dataset.mode]} - ${t[b.dataset.mode]}m`;
+    b.classList.toggle('sel', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+  document.querySelectorAll('[data-act="focus-preset"]').forEach((b) => {
+    const on = Number(b.dataset.focus) === t.focus && Number(b.dataset.short) === t.short;
     b.classList.toggle('sel', on);
     b.setAttribute('aria-pressed', String(on));
   });
   const every = store.state.timer.longEvery;
   $('#cycle').innerHTML = Array.from({ length: every }, (_, i) => `<i class="${i < st.cycle % every || (st.cycle && st.cycle % every === 0 && st.mode === 'long') ? 'on' : ''}"></i>`).join('');
-  $('#roomFoot').textContent = st.distractions ? `The owl caught ${st.distractions} tab switch${st.distractions > 1 ? 'es' : ''} this session` : '';
+  $('#roomFoot').textContent = st.distractions ? `The owl caught ${plural(st.distractions, 'tab switch', 'tab switches')} this session` : '';
 }
 
 function paintSide() {
@@ -134,7 +148,7 @@ function paintSide() {
   const list = sessionsOn(today);
   const caught = list.reduce((a, s) => a + (s.distractions || 0), 0);
   $('#focusToday').innerHTML = `<div class="metric">${ring(pct(mins, goal), hoursLabel(mins), { big: true })}
-    <div><strong>${list.length} sessions</strong><small>Goal ${store.state.profile.dailyGoalHours}h a day</small><small>${caught} distractions caught</small></div></div>`;
+    <div><strong>${plural(list.length, 'session')}</strong><small>Goal ${store.state.profile.dailyGoalHours}h a day</small><small>${plural(caught, 'distraction')} caught</small></div></div>`;
   $('#sessionList').innerHTML = list.length
     ? list.slice().reverse().map((s) => `<div class="item"><span class="grow">${esc(s.label || 'Focus session')}</span>${s.paper ? `<span class="tag">${esc(paperShort(s.paper))}</span>` : ''}<span class="time">${s.minutes}m</span></div>`).join('')
     : empty('No sessions yet today. The owl is waiting.');
@@ -194,7 +208,7 @@ export function render(el) {
   paintSide();
 }
 
-/** Settings changed durations or papers: rebuild the room next time it is shown. */
+/** Papers changed (restore, start fresh): rebuild the room next time it is shown. Lengths repaint on their own. */
 export function invalidate() {
   const el = $('#page-focus');
   if (el) { delete el.dataset.ready; owl?.destroy(); owl = null; }
@@ -210,6 +224,27 @@ onAction('focus-skip', () => {
   timer.setMode(st.mode === 'focus' ? 'short' : 'focus');
 });
 onChange('focus-study', () => timer.setStudy({ paper: $('#studyPaper').value, label: $('#studyLabel').value }));
+
+/** Save lengths and say when they apply: now for a fresh timer, from the next session for one already started. */
+function applyLengths(patch) {
+  const error = timer.setLengths(patch);
+  if (error) {
+    toast(error);
+    return false;
+  }
+  const { focus, short } = store.state.timer;
+  toast(`Focus ${focus} min, break ${short} min${timer.status().startedAt ? '. Starts with your next session' : ''}`);
+  return true;
+}
+
+onAction('focus-preset', (el) => applyLengths({ focus: Number(el.dataset.focus), short: Number(el.dataset.short) }));
+onAction('focus-custom', () => {
+  const t = store.state.timer;
+  const body = `<div class="form2">${Object.entries(timer.LIMITS).map(([key, l]) => field({
+    label: l.label, name: key, type: 'number', value: t[key], required: true, attrs: `min="${l.min}" max="${l.max}" step="1"`,
+  })).join('')}</div>`;
+  openModal('Session lengths', body, (d) => applyLengths(Object.fromEntries(Object.entries(d).map(([k, v]) => [k, Number(v)]))));
+});
 onAction('owl-chat', () => {
   const input = $('#chatInput');
   const text = input.value.trim();
