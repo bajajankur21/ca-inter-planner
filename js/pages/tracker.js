@@ -1,15 +1,17 @@
 // Main tracker: type a task once, see it everywhere. Plus mood/sleep, water and notes logs.
 import { store } from '../store.js';
-import { view, rerender } from '../router.js';
+import { view, rerender, go } from '../router.js';
 import { $, esc, empty, todayKey, addDays, weekDays, monthDays, fmt, fmtTime, options, icon, toast, onAction } from '../util.js';
 import { PRIORITIES, TYPES, byTime, paperShort, addTask } from '../tasks.js';
+import { isOverdue } from '../schedule.js';
 
 export const title = 'Type it here once, see it everywhere.';
 
-const FILTERS = [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['upcoming', 'Upcoming'], ['open', 'Not done'], ['all', 'All']];
+const FILTERS = [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['upcoming', 'Upcoming'], ['overdue', 'Overdue'], ['open', 'Not done'], ['all', 'All']];
 
 function filtered() {
   const today = todayKey();
+  const now = Date.now();
   const week = weekDays(today, store.state.profile.weekStart);
   const month = monthDays(today.slice(0, 7));
   const rules = {
@@ -17,6 +19,7 @@ function filtered() {
     week: (t) => t.date >= week[0] && t.date <= week[6],
     month: (t) => t.date >= month[0] && t.date <= month.at(-1),
     upcoming: (t) => t.date > today,
+    overdue: (t) => isOverdue(t, now),
     open: (t) => !t.done,
     all: () => true,
   };
@@ -30,7 +33,7 @@ function row(t) {
     <td>${cb(t, 'done', 'Done')}</td>
     <td>${fmt(t.date, { day: 'numeric', month: 'short' })}</td>
     <td>${fmtTime(t.from)}</td><td>${fmtTime(t.to)}</td>
-    <td class="wide"><button class="linklike" data-act="task-edit" data-id="${t.id}">${esc(t.title)}</button></td>
+    <td class="wide"><button class="linklike" data-act="task-edit" data-id="${t.id}">${esc(t.title)}</button>${isOverdue(t, Date.now()) ? ` <span class="tag late">Overdue</span> <button class="btn small" data-act="task-reschedule" data-id="${t.id}">Reschedule</button>` : ''}</td>
     <td>${t.paper ? `<span class="tag">${esc(paperShort(t.paper))}</span>` : ''}</td>
     <td>${esc(t.type || '')}</td>
     <td>${cb(t, 'top3', 'Top 3')}</td>
@@ -98,3 +101,5 @@ export function render(el) {
 }
 
 onAction('tracker-filter', (el) => { view.trackerFilter = el.dataset.k; rerender(); });
+// Header pill and dashboard card both lead here.
+onAction('show-overdue', () => go('tracker', { trackerFilter: 'overdue' }));

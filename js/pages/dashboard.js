@@ -4,7 +4,7 @@ import { go } from '../router.js';
 import { createOwl } from '../owl.js';
 import * as timer from '../focusTimer.js';
 import { $, esc, ring, barRow, empty, pct, todayKey, weekDays, fmt, onAction, onChange, toast, icon } from '../util.js';
-import { tasksOn, doneCount, taskRow, addTask } from '../tasks.js';
+import { tasksOn, doneCount, taskRow, addTask, overdueTasks } from '../tasks.js';
 import { minutesOn, hoursLabel, syllabusPct, paperPct, daysToExam, habitTotals, streak } from '../stats.js';
 
 export const title = 'A little progress, every day.';
@@ -41,6 +41,20 @@ function owlCorner() {
     <div class="stack"><span class="muted">${text}</span><button class="btn primary" data-act="go" data-page="focus">${running ? 'Back to the room' : 'Start focusing'}</button></div></div>`;
 }
 
+const OVERDUE_SHOWN = 5;
+
+/** Only appears when something is unfinished past its time, so a clear day keeps the usual dashboard. */
+function overdueCard() {
+  const list = overdueTasks();
+  if (!list.length) return '';
+  const more = list.length - OVERDUE_SHOWN;
+  return `<div class="card s12 overdue-card"><div class="spread"><h3>Overdue &amp; pending <span class="count">${list.length}</span></h3>
+      <button class="btn" data-act="show-overdue">${more > 0 ? `See all ${list.length}` : 'Open in tracker'}</button></div>
+    <p class="muted">Still waiting for you. Tick it when it is done, or move it to a new time.</p>
+    <div class="list">${list.slice(0, OVERDUE_SHOWN).map((t) => taskRow(t, { showDate: true, reschedule: true })).join('')}</div>
+  </div>`;
+}
+
 export function render(el) {
   const s = store.state;
   const today = todayKey();
@@ -54,6 +68,7 @@ export function render(el) {
 
   el.innerHTML = `${heroHtml()}
   <div class="grid">
+    ${overdueCard()}
     ${metric(ring(pct(done, tt.length), `${pct(done, tt.length)}%`), `${done}/${tt.length}`, "Today's tasks")}
     ${metric(ring(habitsToday.pct, `${habitsToday.pct}%`, { color: '#a9d3a5' }), `${habitsToday.done}/${s.habits.length}`, 'Habits today')}
     ${metric(ring(pct(mins, goalMins), hoursLabel(mins), { color: '#c3b3e3' }), hoursLabel(mins), `Focus today, goal ${s.profile.dailyGoalHours}h`)}

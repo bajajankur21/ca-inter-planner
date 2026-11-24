@@ -1,6 +1,6 @@
 // Derived numbers used by several pages. Pure reads of the store; no rendering here.
 import { store } from './store.js';
-import { todayKey, dateKey, daysBetween, pct } from './util.js';
+import { todayKey, dateKey, daysBetween, addDays, pct } from './util.js';
 
 export const STAGES = [['read', 'Read'], ['r1', 'R1'], ['r2', 'R2'], ['r3', 'R3'], ['mtp', 'MTP / Qs']];
 
@@ -44,6 +44,32 @@ export function streak(days) {
     d.setDate(d.getDate() - 1);
   }
   return n;
+}
+
+// ---------- skill sprints ----------
+/** Days a skill was practised: ticked by hand, or a task for that skill finished (on the day it was finished). */
+export function skillDays(skill) {
+  const finished = store.state.tasks.filter((t) => t.skill === skill.id && t.done).map((t) => (t.doneAt ? dateKey(new Date(t.doneAt)) : t.date));
+  return [...new Set([...skill.days, ...finished])].sort();
+}
+
+export function bestStreak(days) {
+  let best = 0;
+  let run = 0;
+  days.forEach((d, i) => {
+    run = i && addDays(days[i - 1], 1) === d ? run + 1 : 1;
+    best = Math.max(best, run);
+  });
+  return best;
+}
+
+/** Where a sprint stands today: day number, days practised inside the sprint window, finished or not. */
+export function sprintProgress(skill, days = skillDays(skill)) {
+  const today = todayKey();
+  const end = addDays(skill.start, skill.length - 1);
+  const day = Math.min(skill.length, daysBetween(skill.start, today) + 1);
+  const practised = days.filter((d) => d >= skill.start && d <= end).length;
+  return { day, end, practised, pct: pct(practised, skill.length), finished: today > end };
 }
 
 // ---------- goals ----------

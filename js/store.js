@@ -23,9 +23,12 @@ export const BLANK_DAY = Object.freeze({
 function defaults() {
   return {
     version: 1,
-    profile: { name: '', examDate: '', attempt: '', weekStart: 1, dailyGoalHours: 6, waterTarget: 8, sound: true },
+    profile: {
+      name: '', examDate: '', attempt: '', weekStart: 1, dailyGoalHours: 6, waterTarget: 8, sound: true,
+      remindersOn: true, quietOn: false, quietFrom: '22:30', quietTo: '07:00',
+    },
     timer: { focus: 25, short: 5, long: 15, longEvery: 4 },
-    tasks: [],         // {id,title,date,from,to,priority,type,paper,top3,event,done}
+    tasks: [],         // {id,title,date,from,to,priority,type,paper,top3,event,skill,done,doneAt,snooze:{at,of}|null}
     days: {},          // 'YYYY-MM-DD' -> BLANK_DAY shape
     habits: [],        // {id,name,days:['YYYY-MM-DD']}
     habitNotes: {},    // 'YYYY-MM' -> {reflection,learned}
@@ -33,6 +36,8 @@ function defaults() {
     vision: [],        // {id,src,caption}
     papers: PAPERS.map(([id, short, name, group, color]) => ({ id, short, name, group, color, chapters: [] })),
     sessions: [],      // {id,date,minutes,paper,label,distractions,ts}
+    skills: [],        // {id,name,goal,length,start,days:['YYYY-MM-DD']}  days = manual "practised" ticks
+    reminderLog: [],   // newest last: {key,taskId,kind,title,message,at,status:'shown'|'quiet'|'skipped',response}
   };
 }
 
@@ -104,7 +109,7 @@ export const store = {
 
   /** Has anything been entered yet (here, or in a cloud copy)? Decides whether a first sign-in must ask before replacing data. */
   hasData(s = state) {
-    return Boolean(s.tasks.length || s.sessions.length || s.habits.length || s.goals.length || Object.keys(s.days).length
+    return Boolean(s.tasks.length || s.sessions.length || s.habits.length || s.goals.length || s.skills.length || Object.keys(s.days).length
       || s.profile.name || s.profile.examDate || s.papers.some((p) => p.chapters.length));
   },
 

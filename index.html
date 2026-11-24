@@ -38,6 +38,7 @@
       <a href="#focus" data-p="focus"><span class="ico" aria-hidden="true">◉</span>Focus room &amp; owl</a>
       <div class="navlabel">GROWTH</div>
       <a href="#habits" data-p="habits"><span class="ico" aria-hidden="true">◈</span>Habit tracker</a>
+      <a href="#skills" data-p="skills"><span class="ico" aria-hidden="true">&#9671;</span>Skill sprint</a>
       <a href="#goals" data-p="goals"><span class="ico" aria-hidden="true">◎</span>Goals &amp; vision</a>
       <a href="#analytics" data-p="analytics"><span class="ico" aria-hidden="true">▥</span>Analytics</a>
       <a href="#settings" data-p="settings"><span class="ico" aria-hidden="true">◐</span>Settings &amp; backup</a>
@@ -52,6 +53,7 @@
         <h2 id="pageTitle"></h2>
       </div>
       <div class="top-actions">
+        <button class="pill overdue" id="overduePill" data-act="show-overdue" hidden></button>
         <a class="pill sync" href="#settings" data-sync-label></a>
         <a class="pill" id="countdownPill" href="#settings"></a>
         <button class="pill primary" data-act="task-new">＋ Add task</button>
@@ -65,6 +67,7 @@
     <section class="page" id="page-study" aria-labelledby="pageTitle"></section>
     <section class="page" id="page-focus" aria-labelledby="pageTitle"></section>
     <section class="page" id="page-habits" aria-labelledby="pageTitle"></section>
+    <section class="page" id="page-skills" aria-labelledby="pageTitle"></section>
     <section class="page" id="page-goals" aria-labelledby="pageTitle"></section>
     <section class="page" id="page-analytics" aria-labelledby="pageTitle"></section>
     <section class="page" id="page-settings" aria-labelledby="pageTitle"></section>

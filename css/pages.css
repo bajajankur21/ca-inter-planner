@@ -127,6 +127,21 @@
 .vdel{position:absolute;top:6px;right:6px;background:#fffc}
 label.btn:focus-within{outline:2px solid var(--pink-ink);outline-offset:2px}
 
+/* Overdue and carry forward */
+.btn.small{padding:4px 10px;font-size:11px}
+.overdue-card{background:#fff8f3;border-color:#f3d2c2}
+h3 .count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#fde2d6;color:#8a3b1c;font:600 12px/1 var(--sans, inherit);vertical-align:middle}
+.tag.late{background:#fde2d6;color:#8a3b1c}
+.pill.overdue{background:#fde8df;color:#8a3b1c;border-color:#f3c4b0;font-weight:600}
+
+/* Skill sprint */
+.skill{display:grid;gap:10px;align-content:start}
+.skill h3{margin:0}
+.skilldays{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}
+.skilldays .hcell{width:auto;aspect-ratio:1;height:auto;cursor:default}
+.skilldays .hcell .i{width:12px;height:12px}
+.sprint-done{background:var(--pinkbg);border-radius:12px;padding:10px 12px;font-size:12px;display:grid;gap:8px;justify-items:start}
+
 @media(max-width:1150px){.quickadd{grid-template-columns:1fr 1fr 1fr}.quickadd .qa-title{grid-column:1/-1}.kpi{grid-column:span 4}}
 @media(max-width:650px){
   .quickadd{grid-template-columns:1fr 1fr}

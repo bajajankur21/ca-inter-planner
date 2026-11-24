@@ -3,6 +3,7 @@ import { $, $$, onAction, wireActions, fmt, todayKey } from './util.js';
 import { store } from './store.js';
 import { setRenderer } from './router.js';
 import { daysToExam } from './stats.js';
+import { overdueTasks } from './tasks.js';
 import { startSync, paintSync } from './sync.js';
 import * as home from './pages/dashboard.js';
 import * as tracker from './pages/tracker.js';
@@ -12,11 +13,12 @@ import * as monthly from './pages/monthly.js';
 import * as study from './pages/study.js';
 import * as focus from './pages/focus.js';
 import * as habits from './pages/habits.js';
+import * as skills from './pages/skills.js';
 import * as goals from './pages/goals.js';
 import * as analytics from './pages/analytics.js';
 import * as settings from './pages/settings.js';
 
-const pages = { home, tracker, daily, weekly, monthly, study, focus, habits, goals, analytics, settings };
+const pages = { home, tracker, daily, weekly, monthly, study, focus, habits, skills, goals, analytics, settings };
 
 const QUOTES = [
   ['I think I can, I know I can.', 'One step at a time.'],
@@ -38,6 +40,11 @@ function renderHeader() {
   pill.textContent = days == null ? 'Set your exam date' : days > 0 ? `${days} days to CA Inter` : days === 0 ? 'Exam day. You have got this!' : 'Exam done. Set the next one';
   const [quote, sub] = QUOTES[new Date().getDate() % QUOTES.length];
   $('#quote').innerHTML = `"${quote}"<small>${sub}</small>`;
+  const late = overdueTasks().length;
+  const overdue = $('#overduePill');
+  overdue.hidden = !late;
+  overdue.textContent = `${late} overdue`;
+  overdue.setAttribute('aria-label', `${late} overdue or pending ${late === 1 ? 'task' : 'tasks'}. Show them.`);
 }
 
 /** Remember which control had focus so a re-render does not throw keyboard users back to the top. */
@@ -83,11 +90,16 @@ wireActions();
 render();
 startSync();
 
-// Re-render shortly after midnight so "today" moves on its own if the tab stays open.
+// Time moves on without any edit: re-render after midnight ("today") and when a task slips into overdue.
 let lastDay = todayKey();
+let lastLate = overdueTasks().length;
 setInterval(() => {
-  if (todayKey() !== lastDay) { lastDay = todayKey(); render(); }
-}, 60000);
+  const late = overdueTasks().length;
+  if (todayKey() === lastDay && late === lastLate) return;
+  lastDay = todayKey();
+  lastLate = late;
+  render();
+}, 30000);
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
