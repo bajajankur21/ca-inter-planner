@@ -11,24 +11,31 @@ const LOG_MAX = 150;
 export const SNOOZES = [5, 10, 15];
 export const KIND_LABELS = { pre: 'Starting in 5 minutes', start: 'Starting now', end: 'Check-in', snooze: 'Snoozed reminder' };
 
+// Emojis are written as escapes on purpose (the editing tool strips literal emojis); the browser shows the real thing.
+const E = {
+  books: '\u{1F4DA}', alarm: '\u{23F0}', pencil: '\u{270F}\u{FE0F}', star: '\u{1F31F}',
+  fire: '\u{1F525}', rocket: '\u{1F680}', muscle: '\u{1F4AA}', timer: '\u{23F1}\u{FE0F}',
+  think: '\u{1F914}', check: '\u{2705}', memo: '\u{1F4DD}', party: '\u{1F389}', tick: '\u{2713}', sleep: '\u{1F634}',
+};
+
 // Several lines per kind, never the same one twice in a row.
 const MESSAGES = {
   pre: [
-    (t) => `Psst! Your ${t} is waiting for you! Just 5 minutes left. Get ready!`,
-    (t) => `Heads up! ${t} starts in 5 minutes. Water bottle, pen, book. Ready?`,
-    (t) => `5 minute warning: ${t} is up next. Wrap up what you are doing.`,
-    (t) => `Your future CA self says: ${t} in 5 minutes. Let us be ready for it.`,
+    (t) => `Psst! Your ${t} is waiting for you! Just 5 minutes left. Get ready! ${E.books}`,
+    (t) => `Heads up! ${t} starts in 5 minutes. Water bottle, pen, book. Ready? ${E.alarm}`,
+    (t) => `5 minute warning: ${t} is up next. Wrap up what you are doing. ${E.pencil}`,
+    (t) => `Your future CA self says: ${t} in 5 minutes. Let us be ready for it. ${E.star}`,
   ],
   start: [
-    (t) => `It's GO TIME! Your ${t} starts NOW. Let's get it done!`,
-    (t) => `${t} starts now. Phone face down, focus up!`,
-    (t) => `Showtime! ${t} begins right now. You have got this.`,
-    (t) => `The clock is ticking: ${t} starts now. One focused block at a time.`,
+    (t) => `It's GO TIME! Your ${t} starts NOW. Let's get it done! ${E.fire}`,
+    (t) => `${t} starts now. Phone face down, focus up! ${E.rocket}`,
+    (t) => `Showtime! ${t} begins right now. You have got this. ${E.muscle}`,
+    (t) => `The clock is ticking: ${t} starts now. One focused block at a time. ${E.timer}`,
   ],
   end: [
-    (t) => `Hey! Your scheduled time for ${t} is over. Did you complete your task?`,
-    (t) => `Time is up for ${t}. Did you finish it?`,
-    (t) => `${t}: the scheduled time is over. Done, or still going?`,
+    (t) => `Hey! Your scheduled time for ${t} is over. Did you complete your task? ${E.think}`,
+    (t) => `Time is up for ${t}. Did you finish it? ${E.check}`,
+    (t) => `${t}: the scheduled time is over. Done, or still going? ${E.memo}`,
   ],
 };
 const lastLine = {};
@@ -86,7 +93,7 @@ async function systemNotify(e) {
     const reg = await navigator.serviceWorker?.getRegistration();
     // Buttons only work on service-worker notifications (Chrome shows them; Safari and iPhone show a plain notification).
     if (reg) {
-      await reg.showNotification(title, { ...options, actions: isCheckin(e) ? [{ action: 'done', title: 'Completed' }, { action: 'pending', title: 'Still pending' }] : [] });
+      await reg.showNotification(title, { ...options, actions: isCheckin(e) ? [{ action: 'done', title: `Completed ${E.tick}` }, { action: 'pending', title: 'Still pending' }] : [] });
     } else {
       const n = new Notification(title, options);
       n.onclick = () => { window.focus(); n.close(); };
@@ -151,7 +158,7 @@ function act(action, key, extra = {}) {
     close(key);
     respond(key, 'done');
     if (e.taskId) setDone(e.taskId, true);
-    toast('Marked as done. Proud of you!');
+    toast(`Marked as done. Proud of you! ${E.party}`);
   } else if (action === 'pending') {
     respond(key, 'pending');
     active.set(key, { entry: e, stage: 'pending' });
@@ -163,7 +170,7 @@ function act(action, key, extra = {}) {
     close(key);
     respond(key, `snoozed ${extra.minutes} min`);
     updateTask(e.taskId, { snooze: { at: Date.now() + extra.minutes * MINUTE, of: baseKind(e) } });
-    toast(`Snoozed for ${extra.minutes} minutes`);
+    toast(`Snoozed for ${extra.minutes} minutes ${E.sleep}`);
   } else if (action === 'open' && !active.has(key)) {
     active.set(key, { entry: e, stage: 'ask' });
     paintCards();
