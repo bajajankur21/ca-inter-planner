@@ -16,6 +16,19 @@ export const paperShort = (id) => store.state.papers.find((p) => p.id === id)?.s
 /** Unfinished tasks past their end time, oldest first. A view, never a copy: rescheduling moves the same task. */
 export const overdueTasks = (now = Date.now()) => store.state.tasks.filter((t) => isOverdue(t, now)).sort((a, b) => endOf(a) - endOf(b));
 
+const OVERDUE_SHOWN = 5;
+/** Dashboard card (every day mode). Only appears when something is overdue, so a clear day keeps the usual dashboard. */
+export function overdueCard() {
+  const list = overdueTasks();
+  if (!list.length) return '';
+  const more = list.length - OVERDUE_SHOWN;
+  return `<div class="card s12 overdue-card"><div class="spread"><h3>Overdue &amp; pending <span class="count">${list.length}</span></h3>
+      <button class="btn" data-act="show-overdue">${more > 0 ? `See all ${list.length}` : 'Open in tracker'}</button></div>
+    <p class="muted">Still waiting for you. Tick it when it is done, or move it to a new time.</p>
+    <div class="list">${list.slice(0, OVERDUE_SHOWN).map((t) => taskRow(t, { showDate: true, reschedule: true })).join('')}</div>
+  </div>`;
+}
+
 const timeRange = (t) => (t.from ? `${fmtTime(t.from)}${t.to ? ` - ${fmtTime(t.to)}` : ''}` : '');
 const flags = (t) =>
   `${t.top3 ? `<span class="flag" title="Top 3 priority">${icon('star', 'Top 3')}</span>` : ''}${t.event ? `<span class="flag" title="Event">${icon('pin', 'Event')}</span>` : ''}`;

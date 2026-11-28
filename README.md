@@ -9,7 +9,7 @@ It is a plain static website (HTML, CSS, JavaScript) with no build step. Sign in
 
 | Page | What it does |
 |---|---|
-| Dashboard | Exam countdown, today's progress rings, top 3, schedule, week strip, habit check-in, mini owl. An Overdue and pending card appears on top only when something is overdue |
+| Dashboard | Exam countdown, today's progress rings, top 3, schedule, week strip, habit check-in, mini owl. An Overdue and pending card appears on top only when something is overdue. Switches by itself between weekday, Saturday and Sunday modes (below) |
 | Main tracker | Type a task once and it appears on every page. Filters (including Overdue), inline edits, mood/sleep, notes and water logs |
 | Reminders | Smart task reminders: settings, quiet hours, what is coming up today, history of every reminder and her answer |
 | Daily planner | Hourly time blocks, top 3, to-do, mood and affirmation, wake/bed time, water glasses, meals, workout, notes |
@@ -17,11 +17,24 @@ It is a plain static website (HTML, CSS, JavaScript) with no build step. Sign in
 | Month at a glance | Calendar with tasks and events, monthly progress, upcoming events |
 | Papers and revision | P1 to P6 with chapter-wise Read, R1, R2, R3 and MTP/Qs ticks, exam countdown |
 | Focus room and owl | Pomodoro timer with adjustable lengths (25/5, 50/10, 60/10, 90/15 or custom), an owl that sleeps, wakes, watches the pointer, notices tab switches and celebrates finished sessions |
-| Habit tracker | Monthly grid for up to 12 habits, six KPI donuts, daily progress line, reflection notes |
+| Habit tracker | Monthly grid for up to 12 regular habits plus 6 Sunday-only habits, six KPI donuts, daily progress line, reflection notes |
 | Skill sprint | N-day sprints for any skill; today's learning is added as a task, finishing it (or a manual tick) grows the streak |
 | Goals and vision | Goals in six life areas with steps, year at a glance, vision board images |
 | Analytics | Study hours, focus by paper, habit consistency, task completion |
 | Settings and backup | Name, exam date, timer lengths, sounds, Google sync, download/restore backup |
+
+## Weekday, Saturday and Sunday modes
+
+The dashboard picks its mode from the date and switches at midnight, no reload needed.
+
+- **Monday to Friday:** the usual dashboard, unchanged.
+- **Saturday, light study day:** the same dashboard and the same habits, with a light study goal (Settings, default 2h)
+  and its own headline, note and quotes.
+- **Sunday, rest day:** a separate dashboard: no study target, an "Only if it matters" list for important revision or
+  urgent backlog, separate Sunday habits (pausable), a week in review, the week ahead and recharge ideas.
+- **Streaks and percentages:** regular habits run Monday to Saturday. An unticked Sunday never breaks a streak or lowers a
+  percentage (a Sunday tick still counts as a bonus). Sunday habits never count as missed. No stored data changes:
+  these are rules for reading the same check-ins, so streaks that used to stop at a Sunday now continue.
 
 ## Reminders and overdue tasks
 
@@ -80,6 +93,8 @@ js/firebaseConfig.js  public Firebase web config
 firestore.rules       access rules to paste into the Firebase console
 js/tasks.js           task model and shared task UI (edit, done, reschedule, overdue list)
 js/schedule.js        pure time rules: task end, overdue, reminder times, quiet hours (unit tested)
+js/dayMode.js         weekday / Saturday / Sunday mode for a date, and each mode's content
+js/pages/sunday.js    the Sunday rest-day dashboard
 js/assistant.js       reminder engine, messages, in-app check-in cards, system notifications
 js/focusTimer.js      pomodoro engine (timestamp based, survives refresh)
 js/owl.js             SVG owl with moods, blinking and eye tracking

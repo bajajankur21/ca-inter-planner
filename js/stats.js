@@ -1,6 +1,7 @@
 // Derived numbers used by several pages. Pure reads of the store; no rendering here.
 import { store } from './store.js';
 import { todayKey, dateKey, daysBetween, addDays, pct } from './util.js';
+import { dayMode, isSunday, SATURDAY, SUNDAY } from './dayMode.js';
 
 export const STAGES = [['read', 'Read'], ['r1', 'R1'], ['r2', 'R2'], ['r3', 'R3'], ['mtp', 'MTP / Qs']];
 
@@ -26,21 +27,37 @@ export function daysToExam() {
   return examDate ? daysBetween(todayKey(), examDate) : null;
 }
 
-// ---------- habits ----------
-/** Done check-ins and possible check-ins for the given day keys. */
-export function habitTotals(keys) {
-  const { habits } = store.state;
-  const done = sum(habits, (h) => keys.filter((k) => h.days.includes(k)).length);
-  return { done, total: habits.length * keys.length, pct: pct(done, habits.length * keys.length) };
+/** Study goal for a day: the usual goal Mon-Fri, the light goal on Saturday, nothing on Sunday. */
+export function goalHoursFor(key) {
+  const { dailyGoalHours, saturdayGoalHours } = store.state.profile;
+  return { [SATURDAY]: saturdayGoalHours, [SUNDAY]: 0 }[dayMode(key)] ?? dailyGoalHours;
 }
 
+// ---------- habits ----------
+// Two sets: regular habits (schedule 'week', the default, also what every older habit is) run Monday to Saturday;
+// Sunday habits (schedule 'sunday') only exist on Sundays. Sunday is a rest day for regular habits, and a skipped or
+// paused Sunday habit is never a missed day, so neither can lower a percentage or break a streak.
+export const isSundayHabit = (h) => h.schedule === 'sunday';
+export const weekHabits = () => store.state.habits.filter((h) => !isSundayHabit(h));
+export const sundayHabits = () => store.state.habits.filter(isSundayHabit);
+export const sundaysDone = (h) => h.days.filter(isSunday).length;
+
+/** Done check-ins and possible check-ins of regular habits for the given day keys (Sundays never count). */
+export function habitTotals(keys) {
+  const habits = weekHabits();
+  const counted = keys.filter((k) => !isSunday(k));
+  const done = sum(habits, (h) => counted.filter((k) => h.days.includes(k)).length);
+  return { done, total: habits.length * counted.length, pct: pct(done, habits.length * counted.length) };
+}
+
+/** Days in a row up to today (or yesterday, if today is not done yet). An unticked Sunday is skipped, not a break. */
 export function streak(days) {
   const set = new Set(days);
   const d = new Date();
   if (!set.has(dateKey(d))) d.setDate(d.getDate() - 1);
   let n = 0;
-  while (set.has(dateKey(d))) {
-    n++;
+  for (let key = dateKey(d); set.has(key) || isSunday(key); key = dateKey(d)) {
+    if (set.has(key)) n++;
     d.setDate(d.getDate() - 1);
   }
   return n;
@@ -53,11 +70,14 @@ export function skillDays(skill) {
   return [...new Set([...skill.days, ...finished])].sort();
 }
 
+/** Longest run in sorted unique day keys; like streak(), an unticked Sunday in between does not break it. */
 export function bestStreak(days) {
   let best = 0;
   let run = 0;
   days.forEach((d, i) => {
-    run = i && addDays(days[i - 1], 1) === d ? run + 1 : 1;
+    const next = i && addDays(days[i - 1], 1);
+    const continues = i && (next === d || (isSunday(next) && addDays(next, 1) === d));
+    run = continues ? run + 1 : 1;
     best = Math.max(best, run);
   });
   return best;

@@ -86,6 +86,8 @@ export const icon = (name, label = '') =>
   `<svg class="i" viewBox="0 0 24 24" ${label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"'}><path d="${ICONS[name]}"/></svg>`;
 
 // ---------- small render helpers ----------
+/** Dashboard KPI tile: a donut plus a big number and a caption. */
+export const kpiCard = (ringHtml, big, small) => `<div class="card s3 kpi-card"><div class="metric">${ringHtml}<div><strong>${big}</strong><small>${small}</small></div></div></div>`;
 export const ring = (p, label, { color = '', big = false } = {}) =>
   `<div class="ring${big ? ' big' : ''}" style="--p:${clamp(p, 0, 100)}${color ? `;--c:${color}` : ''}" data-label="${esc(label)}" role="img" aria-label="${esc(label)}"></div>`;
 export const bar = (p, color = '') =>

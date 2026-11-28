@@ -2,7 +2,8 @@
 import { store } from '../store.js';
 import { esc, barRow, empty, pct, todayKey, addDays, monthDays, fmt } from '../util.js';
 import { barChart, lineChart } from '../charts.js';
-import { minutesOn, minutesForPaper, hoursLabel, syllabusPct, habitTotals } from '../stats.js';
+import { minutesOn, minutesForPaper, hoursLabel, syllabusPct, habitTotals, weekHabits } from '../stats.js';
+import { isSunday } from '../dayMode.js';
 import { tasksOn, doneCount } from '../tasks.js';
 
 export const title = 'Look how far the little steps go.';
@@ -34,9 +35,10 @@ export function render(el) {
     <div class="card s8"><h3>Study hours, last 14 days</h3>${totalMin ? barChart(hours, { unit: 'h' }) : empty('Finish a focus session to start your chart.')}</div>
     <div class="card s4"><h3>Focus by paper</h3><div class="stack">${s.papers.map((p) => barRow(p.short, pct(minutesForPaper(p.id), paperMax), p.color, hoursLabel(minutesForPaper(p.id)))).join('')}</div>
       <p class="muted">Pick a paper in the focus room to fill this in.</p></div>
-    <div class="card s6"><h3>Habit consistency this month</h3>${s.habits.length ? `<div class="stack">${s.habits.map((h) => {
-      const n = monthSoFar.filter((d) => h.days.includes(d)).length;
-      return barRow(h.name, pct(n, monthSoFar.length), '#a9d3a5', `${n}/${monthSoFar.length}`);
+    <div class="card s6"><h3>Habit consistency this month</h3>${weekHabits().length ? `<div class="stack">${weekHabits().map((h) => {
+      const workDays = monthSoFar.filter((d) => !isSunday(d)); // Sunday is a rest day
+      const n = workDays.filter((d) => h.days.includes(d)).length;
+      return barRow(h.name, pct(n, workDays.length), '#a9d3a5', `${n}/${workDays.length}`);
     }).join('')}</div><p class="muted">Overall ${habitTotals(monthSoFar).pct}% this month.</p>` : empty('Add habits to see consistency.')}</div>
     <div class="card s6"><h3>Tasks done per day (%)</h3>${taskPcts.some((v) => v != null) ? lineChart(taskPcts, last14.map((d) => fmt(d, { day: 'numeric' }))) : empty('Plan tasks to see your completion trend.')}
       <p class="muted">Syllabus ticked: ${syllabusPct()}%. Distractions the owl caught: ${caught}.</p></div>

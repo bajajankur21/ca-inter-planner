@@ -24,13 +24,13 @@ function defaults() {
   return {
     version: 1,
     profile: {
-      name: '', examDate: '', attempt: '', weekStart: 1, dailyGoalHours: 6, waterTarget: 8, sound: true,
+      name: '', examDate: '', attempt: '', weekStart: 1, dailyGoalHours: 6, saturdayGoalHours: 2, waterTarget: 8, sound: true,
       remindersOn: true, quietOn: false, quietFrom: '22:30', quietTo: '07:00',
     },
     timer: { focus: 25, short: 5, long: 15, longEvery: 4 },
     tasks: [],         // {id,title,date,from,to,priority,type,paper,top3,event,skill,done,doneAt,snooze:{at,of}|null}
     days: {},          // 'YYYY-MM-DD' -> BLANK_DAY shape
-    habits: [],        // {id,name,days:['YYYY-MM-DD']}
+    habits: [],        // {id,name,days:['YYYY-MM-DD'],schedule?:'week'|'sunday',paused?} no schedule = 'week' (Mon-Sat)
     habitNotes: {},    // 'YYYY-MM' -> {reflection,learned}
     goals: [],         // {id,title,area,month,done,steps:[{id,text,done}]}
     vision: [],        // {id,src,caption}

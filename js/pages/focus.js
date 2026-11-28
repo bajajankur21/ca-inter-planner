@@ -4,7 +4,8 @@ import { createOwl } from '../owl.js';
 import * as timer from '../focusTimer.js';
 import { hoot } from '../sound.js';
 import { $, esc, ring, empty, options, onAction, onChange, pct, todayKey, toast, field, openModal, plural } from '../util.js';
-import { minutesOn, sessionsOn, hoursLabel } from '../stats.js';
+import { minutesOn, sessionsOn, hoursLabel, goalHoursFor } from '../stats.js';
+import { dayMode, SATURDAY, SUNDAY } from '../dayMode.js';
 import { paperShort } from '../tasks.js';
 
 export const title = 'Focus together, one session at a time.';
@@ -144,11 +145,12 @@ function paint() {
 function paintSide() {
   const today = todayKey();
   const mins = minutesOn(today);
-  const goal = store.state.profile.dailyGoalHours * 60;
+  const goalHours = goalHoursFor(today);
+  const goal = goalHours * 60;
   const list = sessionsOn(today);
   const caught = list.reduce((a, s) => a + (s.distractions || 0), 0);
   $('#focusToday').innerHTML = `<div class="metric">${ring(pct(mins, goal), hoursLabel(mins), { big: true })}
-    <div><strong>${plural(list.length, 'session')}</strong><small>Goal ${store.state.profile.dailyGoalHours}h a day</small><small>${plural(caught, 'distraction')} caught</small></div></div>`;
+    <div><strong>${plural(list.length, 'session')}</strong><small>${{ [SATURDAY]: `Light day, goal ${goalHours}h`, [SUNDAY]: 'Rest day, no study target' }[dayMode(today)] ?? `Goal ${goalHours}h a day`}</small><small>${plural(caught, 'distraction')} caught</small></div></div>`;
   $('#sessionList').innerHTML = list.length
     ? list.slice().reverse().map((s) => `<div class="item"><span class="grow">${esc(s.label || 'Focus session')}</span>${s.paper ? `<span class="tag">${esc(paperShort(s.paper))}</span>` : ''}<span class="time">${s.minutes}m</span></div>`).join('')
     : empty('No sessions yet today. The owl is waiting.');

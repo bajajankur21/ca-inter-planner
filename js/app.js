@@ -4,6 +4,7 @@ import { store } from './store.js';
 import { setRenderer } from './router.js';
 import { daysToExam } from './stats.js';
 import { overdueTasks } from './tasks.js';
+import { dayMode, ofTheDay, MODES } from './dayMode.js';
 import { startSync, paintSync } from './sync.js';
 import { startAssistant } from './assistant.js';
 import * as home from './pages/dashboard.js';
@@ -22,25 +23,17 @@ import * as settings from './pages/settings.js';
 
 const pages = { home, tracker, reminders, daily, weekly, monthly, study, focus, habits, skills, goals, analytics, settings };
 
-const QUOTES = [
-  ['I think I can, I know I can.', 'One step at a time.'],
-  ['Small daily progress beats last-minute panic.', 'Consistency wins.'],
-  ['Revise like the exam is tomorrow.', 'R1, R2, R3.'],
-  ['Discipline is choosing what you want most over what you want now.', 'Future CA.'],
-  ['Every chapter you finish is one less to fear.', 'Keep ticking.'],
-  ['Practice the questions, not just the theory.', 'MTPs and RTPs.'],
-  ['Rest is part of the plan, not a break from it.', 'Be kind to yourself.'],
-];
-
 const currentPage = () => (pages[location.hash.slice(1)] ? location.hash.slice(1) : 'home');
 
 function renderHeader() {
   const today = todayKey();
+  const mode = dayMode(today);
+  document.body.dataset.mode = mode;
   $('#todayLabel').textContent = fmt(today, { weekday: 'long', day: 'numeric', month: 'long' });
   const days = daysToExam();
   const pill = $('#countdownPill');
   pill.textContent = days == null ? 'Set your exam date' : days > 0 ? `${days} days to CA Inter` : days === 0 ? 'Exam day. You have got this!' : 'Exam done. Set the next one';
-  const [quote, sub] = QUOTES[new Date().getDate() % QUOTES.length];
+  const [quote, sub] = ofTheDay(MODES[mode].quotes);
   $('#quote').innerHTML = `"${quote}"<small>${sub}</small>`;
   const late = overdueTasks().length;
   const overdue = $('#overduePill');
@@ -68,7 +61,8 @@ function render() {
     if (on) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
-  $('#pageTitle').textContent = pages[name].title;
+  const { title } = pages[name];
+  $('#pageTitle').textContent = typeof title === 'function' ? title() : title; // the dashboard's title follows the day mode
   renderHeader();
   pages[name].render($(`#page-${name}`));
   paintSync();

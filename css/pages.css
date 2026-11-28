@@ -108,6 +108,11 @@
 .hcell{width:22px;height:22px;border-radius:6px;border:1.5px solid #e2d6cf;background:#fff;display:grid;place-items:center;padding:0;color:#fff;font-size:12px}
 .hcell.on{background:var(--pink-ink);border-color:var(--pink-ink)}
 .hcell.today{box-shadow:0 0 0 2px var(--yellow)}
+/* Weekend modes: Sunday cells of regular habits are optional (rest), Sunday habits have no weekday cells */
+.hcell.rest:not(.on){border-style:dashed;background:#ffffff80}
+.hcell.off{border:0;background:none}
+.habitgrid .paused .hname button.linklike{opacity:.55}
+.habit-add select{flex:0 0 auto;width:auto}
 .wkpct{font-weight:700;color:#6f5a55;padding:6px 2px!important}
 
 /* goals + vision */
@@ -133,6 +138,11 @@ label.btn:focus-within{outline:2px solid var(--pink-ink);outline-offset:2px}
 h3 .count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#fde2d6;color:#8a3b1c;font:600 12px/1 var(--sans, inherit);vertical-align:middle}
 .tag.late{background:#fde2d6;color:#8a3b1c}
 .pill.overdue{background:#fde8df;color:#8a3b1c;border-color:#f3c4b0;font-weight:600}
+
+/* Day modes: same layout, a gentle accent so Saturday and Sunday feel different at a glance */
+body[data-mode=saturday] #page-home .hero{background:linear-gradient(135deg,#fff7e6,#fdeef0)}
+body[data-mode=sunday] #page-home .hero{background:linear-gradient(135deg,#eef6ec,#f3eefa)}
+body[data-mode=sunday] #page-home .hero .eyebrow{color:#3f6b3a}
 
 /* Skill sprint */
 .skill{display:grid;gap:10px;align-content:start}

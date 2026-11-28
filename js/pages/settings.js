@@ -20,6 +20,7 @@ export function render(el) {
         <label class="lbl">Attempt<input class="field" value="${esc(p.attempt)}" placeholder="e.g. May 2027" data-change="profile" data-field="attempt"></label>
         <label class="lbl">Week starts on<select class="field" data-change="profile" data-field="weekStart">${options([[1, 'Monday'], [0, 'Sunday']], p.weekStart)}</select></label>
         ${num('Daily study goal (hours)', 'profile', 'dailyGoalHours', p.dailyGoalHours, 1, 16)}
+        ${num('Saturday study goal (hours, light day)', 'profile', 'saturdayGoalHours', p.saturdayGoalHours, 0, 8)}
         ${num('Water target (glasses)', 'profile', 'waterTarget', p.waterTarget, 1, 16)}
       </div>
       <label class="check"><input type="checkbox" ${p.sound ? 'checked' : ''} data-change="profile" data-field="sound"> Sounds (owl hoot and session chime)</label>
